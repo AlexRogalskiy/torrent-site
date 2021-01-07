@@ -1,0 +1,95 @@
+{
+  "name": "webtorrent.io",
+  "version": "0.0.1",
+  "author": {
+    "name": "WebTorrent, LLC",
+    "email": "feross@webtorrent.io",
+    "url": "https://webtorrent.io"
+  },
+  "browserify": {
+    "transform": [
+      "brfs"
+    ]
+  },
+  "bugs": {
+    "url": "https://github.com/webtorrent/webtorrent.io/issues"
+  },
+  "dependencies": {
+    "basic-auth": "^2.0.0",
+    "body-parser": "^1.15.2",
+    "compression": "^1.0.11",
+    "cors": "^2.7.1",
+    "discord-irc": "^2.7.2",
+    "domready": "^1.0.6",
+    "express": "^4.8.8",
+    "express-rate-limit": "^5.0.0",
+    "gitter-irc-bot": "^1.0.0",
+    "highlight.js": "^10.0.0",
+    "moment": "^2.10.6",
+    "morgan": "^1.9.1",
+    "multer": "^1.1.0",
+    "p2p-graph": "^2.0.0",
+    "prettier-bytes": "^1.0.3",
+    "pug": "^2.0.0-beta4",
+    "remarkable": "^2.0.0",
+    "rollbar": "^2.4.5",
+    "run-parallel-limit": "^1.0.3",
+    "semver": "^7.3.2",
+    "serve-index": "^1.8.0",
+    "simple-get": "^3.0.0",
+    "throttleit": "^1.0.0",
+    "webtorrent": "webtorrent/webtorrent"
+  },
+  "devDependencies": {
+    "brfs": "^2.0.0",
+    "browserify": "^16.0.0",
+    "husky": "^4.2.5",
+    "nodemon": "^2.0.0",
+    "standard": "*",
+    "stylus": "^0.54.0",
+    "tinyify": "^2.5.2",
+    "watchify": "^3.1.2"
+  },
+  "homepage": "https://webtorrent.io",
+  "husky": {
+    "hooks": {
+      "pre-push": "npm test"
+    }
+  },
+  "keywords": [
+    "bittorrent",
+    "bittorrent client",
+    "download",
+    "mad science",
+    "streaming",
+    "torrent",
+    "webrtc",
+    "webtorrent"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/webtorrent/webtorrent.io.git"
+  },
+  "scripts": {
+    "build": "npm run build-css && npm run build-js",
+    "build-css": "stylus --include-css client/style.styl -o static/ -c",
+    "build-js": "browserify --plugin tinyify client > static/bundle.js",
+    "deploy": "./tools/trigger-deploy.sh",
+    "secret-download": "rsync -a -O -v --delete -e \"ssh\" feross@webtorrent:\"/home/feross/www/webtorrent.io/secret/\" secret/",
+    "secret-upload": "rsync -a -O -v --delete -e \"ssh\" secret/ feross@webtorrent:/home/feross/www/webtorrent.io/secret/",
+    "size": "npm run size-js && npm run size-css",
+    "size-css": "npm run build-css && cat static/style.css | gzip | wc -c",
+    "size-js": "npm run build-js && cat static/bundle.js | gzip | wc -c",
+    "start": "node server",
+    "static-download": "rsync -a -O -v --delete -e \"ssh\" feross@webtorrent:\"/home/feross/www/webtorrent.io/static/torrents/\" static/torrents/",
+    "static-upload": "rsync -a -O -v --delete -e \"ssh\" static/torrents/ feross@webtorrent:/home/feross/www/webtorrent.io/static/torrents/",
+    "test": "standard",
+    "watch": "npm run watch-css & npm run watch-js & npm run watch-server",
+    "watch-css": "stylus --include-css client/style.styl -o static/ -w",
+    "watch-js": "watchify client -o static/bundle.js -dv",
+    "watch-server": "DEBUG=webtorrent*,bittorrent* nodemon server -e js,json,pug -i client/ -i static/ -i logs/"
+  }
+}
